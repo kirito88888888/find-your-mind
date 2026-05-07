@@ -1272,7 +1272,7 @@
           </span>
           <span class="landing-tag tag-br">Collector Series · #001</span>
           <div class="landing-mascot">
-            <img src="assets/mascot/mascot-confident.png" alt="" onerror="this.parentElement.innerHTML='<div style=\'color:white;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;opacity:0.5\'>MIND GENIE</div>'" />
+            <img src="mascot-confident.png" alt="" onerror="this.parentElement.innerHTML='<div style=\'color:white;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;opacity:0.5\'>MIND GENIE</div>'" />
           </div>
         </div>
       </div>
@@ -1331,7 +1331,7 @@
     <div class="email-main">
       <div class="email-card">
         <div class="email-mascot">
-          <img src="assets/mascot/mascot-surprised.png" alt="" onerror="this.style.display='none'" />
+          <img src="mascot-surprised.png" alt="" onerror="this.style.display='none'" />
         </div>
         <h2 class="email-headline">Your Mind is ready.</h2>
         <p class="email-sub">Enter your email to reveal your archetype and get early access to Animoca Minds.</p>
@@ -1368,7 +1368,7 @@
             <div class="card-hero-bg"></div>
             <span class="card-hero-spark tl">⚡ AI Agent</span>
             <span class="card-hero-spark br" id="card-hero-hours">8h / week</span>
-            <img class="card-hero-img" id="card-hero-img" src="assets/mascot/mascot-confident.png" alt="" onerror="this.style.display='none'" />
+            <img class="card-hero-img" id="card-hero-img" src="mascot-confident.png" alt="" onerror="this.style.display='none'" />
           </div>
         </div>
 
@@ -1430,7 +1430,7 @@ const questions = [
       "Catching up on messages and planning who to reach out to",
       "Researching something new I stumbled across this week"
     ],
-    genieImage: "assets/mascot/mascot-thinking.png",
+    genieImage: "mascot-thinking.png",
     genieLabel: "Thinking…"
   },
   {
@@ -1441,7 +1441,7 @@ const questions = [
       "Managing logistics — travel, bookings, coordination",
       "Creating content, building, or making things from scratch"
     ],
-    genieImage: "assets/mascot/mascot-angry.png",
+    genieImage: "mascot-angry.png",
     genieLabel: "Feeling the pain…"
   },
   {
@@ -1452,7 +1452,7 @@ const questions = [
       "A trip, event, or plan that needs coordinating",
       "Something in the market or industry I need to act on"
     ],
-    genieImage: "assets/mascot/mascot-surprised.png",
+    genieImage: "mascot-surprised.png",
     genieLabel: "Surprised!"
   },
   {
@@ -1463,7 +1463,7 @@ const questions = [
       "My content creation and creative output",
       "My health, nutrition, and fitness tracking"
     ],
-    genieImage: "assets/mascot/mascot-happy.png",
+    genieImage: "mascot-happy.png",
     genieLabel: "Good choice!"
   },
   {
@@ -1474,7 +1474,7 @@ const questions = [
       "Creative and spontaneous, full of ideas",
       "Strategic and focused, plays the long game"
     ],
-    genieImage: "assets/mascot/mascot-confident.png",
+    genieImage: "mascot-confident.png",
     genieLabel: "Getting clearer…"
   },
   {
@@ -1485,7 +1485,7 @@ const questions = [
       "Dropping the ball on something important for someone else",
       "Not making enough progress on what I'm building"
     ],
-    genieImage: "assets/mascot/mascot-happy.png",
+    genieImage: "mascot-happy.png",
     genieLabel: "Almost there!"
   },
   {
@@ -1496,7 +1496,7 @@ const questions = [
       "Deep in a creative flow, building something I'm proud of",
       "Running a tight system where everything just works"
     ],
-    genieImage: "assets/mascot/mascot-confident.png",
+    genieImage: "mascot-confident.png",
     genieLabel: "Ready to reveal…"
   }
 ];
@@ -1753,7 +1753,7 @@ function populateResultCard(key, archetype) {
     Builder: 'thinking', Seller: 'confident', Connector: 'happy',
     Analyst: 'thinking'
   }[key] || 'confident';
-  document.getElementById('card-hero-img').src = `assets/mascot/mascot-${heroExpr}.png`;
+  document.getElementById('card-hero-img').src = `mascot-${heroExpr}.png`;
 
   const tasksEl = document.getElementById('card-tasks');
   tasksEl.innerHTML = archetype.tasks.map(t => `
