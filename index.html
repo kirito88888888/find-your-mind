@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--
+================================================================================
+  FIND YOUR MIND — Animoca Minds Personality Quiz
+  Single-file production build
+================================================================================
+
+  IMAGES NEEDED (place in same directory as index.html):
+  genie-thinking.png   — Question 1 (thoughtful, hand on chin)
+  genie-angry.png      — Question 2 (frustrated, arms crossed)
+  genie-surprised.png  — Question 3 (wide eyed, mouth open)
+  genie-happy.png      — Question 4 (smiling, thumbs up)
+  genie-confident.png  — Question 5 (arms folded, nodding)
+  genie-excited.png    — Question 6 (leaning forward, energetic)
+  genie-final.png      — Question 7 (arms together, ready to reveal)
+  animoca-logo.png     — Animoca Minds logo (landing screen)
+
+  // REPLACE: swap genie-[expression].png files in the same directory as index.html
+================================================================================
+-->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Find Your Mind — Animoca Minds</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet" />
+
+<style>
+  /* ─── Reset & Base ─────────────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:   #0A0E1A;
+    --navy2:  #0F1628;
+    --cream:  #F5F0E8;
+    --cream2: #EDE7D8;
+    --orange: #E8A030;
+    --orange2:#D4911F;
+    --white:  #FFFFFF;
+    --dark:   #1A1F33;
+    --muted:  #8892A4;
+    --radius: 16px;
+    --shadow: 0 8px 32px rgba(0,0,0,0.35);
+    --trans:  0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  html, body {
+    height: 100%;
+    font-family: 'Inter', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── Screen System ─────────────────────────────────────────────────────── */
+  .screen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.45s ease;
+    overflow-y: auto;
+  }
+  .screen.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* ─── Landing Screen ────────────────────────────────────────────────────── */
+  #screen-landing {
+    background: var(--navy);
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .landing-inner {
+    max-width: 600px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem 0;
+  }
+
+  /* // REPLACE: swap animoca-logo.png here */
+  .logo-placeholder {
+    width: 180px;
+    height: 48px;
+    background: rgba(232, 160, 48, 0.15);
+    border: 1.5px solid rgba(232, 160, 48, 0.4);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--orange);
+    text-transform: uppercase;
+  }
+
+  .landing-badge {
+    background: rgba(232, 160, 48, 0.12);
+    border: 1px solid rgba(232, 160, 48, 0.3);
+    border-radius: 100px;
+    padding: 0.35rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--orange);
+    text-transform: uppercase;
+  }
+
+  .landing-headline {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2.2rem, 6vw, 3.8rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--white);
+  }
+
+  .landing-headline span {
+    color: var(--orange);
+  }
+
+  .landing-sub {
+    font-size: clamp(1rem, 2.5vw, 1.15rem);
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 440px;
+  }
+
+  .genie-preview {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, rgba(232,160,48,0.18), rgba(10,14,26,0) 70%);
+    border: 2px solid rgba(232,160,48,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  .genie-preview img {
+    width: 160px;
+    height: 160px;
+    object-fit: contain;
+    border-radius: 50%;
+  }
+
+  .genie-preview .genie-fallback {
+    font-size: 5rem;
+    line-height: 1;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(232,160,48,0.15), 0 0 60px rgba(232,160,48,0.05); }
+    50%       { box-shadow: 0 0 40px rgba(232,160,48,0.3), 0 0 100px rgba(232,160,48,0.12); }
+  }
+
+  /* ─── Buttons ───────────────────────────────────────────────────────────── */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--orange);
+    color: var(--navy);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 2.2rem;
+    cursor: pointer;
+    transition: background var(--trans), transform var(--trans), box-shadow var(--trans);
+    text-decoration: none;
+    white-space: nowrap;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:hover {
+    background: var(--orange2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(232,160,48,0.35);
+  }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-secondary {
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    color: var(--white);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 12px;
+    padding: 0.85rem 1.8rem;
+    cursor: pointer;
+    transition: border-color var(--trans), background var(--trans);
+  }
+  .btn-secondary:hover {
+    border-color: rgba(255,255,255,0.45);
+    background: rgba(255,255,255,0.05);
+  }
+
+  .trust-line {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  /* ─── Quiz Screen ───────────────────────────────────────────────────────── */
+  #screen-quiz {
+    background: var(--navy);
+    padding: 0;
+    align-items: stretch;
+  }
+
+  .quiz-layout {
+    display: flex;
+    width: 100%;
+    min-height: 100dvh;
+  }
+
+  /* Left — Genie Panel */
+  .genie-panel {
+    width: 40%;
+    background: var(--navy2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    position: relative;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    overflow: hidden;
+  }
+
+  .genie-panel::before {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(232,160,48,0.08) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: pulse-glow 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  /* // REPLACE: swap genie-[1-7].png files here for each question expression */
+  #genie-container {
+    width: 320px;
+    height: 320px;
+    max-width: 80%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .genie-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 20px;
+    transition: opacity 0.4s ease;
+    opacity: 0;
+  }
+  .genie-img.visible { opacity: 1; }
+
+  .genie-placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(232,160,48,0.08), rgba(232,160,48,0.03));
+    border: 1.5px solid rgba(232,160,48,0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    animation: pulse-glow 3s ease-in-out infinite;
+    transition: opacity 0.4s ease;
+  }
+  .genie-placeholder.hidden { opacity: 0; }
+
+  .genie-placeholder-icon { font-size: 5rem; line-height: 1; }
+  .genie-placeholder-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--orange);
+    font-weight: 600;
+    opacity: 0.7;
+  }
+
+  .genie-expression-label {
+    margin-top: 1.5rem;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(232,160,48,0.6);
+    text-align: center;
+  }
+
+  /* Right — Quiz Content Panel */
+  .quiz-content {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    padding: 2.5rem 3rem;
+    overflow-y: auto;
+  }
+
+  /* Progress Bar */
+  .progress-wrap {
+    margin-bottom: 2.5rem;
+  }
+
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.6rem;
+  }
+
+  .progress-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .progress-count {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--orange);
+  }
+
+  .progress-track {
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--orange);
+    border-radius: 100px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 8px rgba(232,160,48,0.5);
+  }
+
+  /* Question */
+  .question-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .question-slide {
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .question-slide.exiting {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  .question-slide.entering {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  .question-text {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(1.2rem, 2.5vw, 1.65rem);
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--white);
+    margin-bottom: 2rem;
+    letter-spacing: -0.01em;
+  }
+
+  .answers-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .answer-card {
+    background: rgba(245, 240, 232, 0.04);
+    border: 1.5px solid rgba(245, 240, 232, 0.1);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.4rem;
+    cursor: pointer;
+    transition: background var(--trans), border-color var(--trans), transform var(--trans), box-shadow var(--trans);
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .answer-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(232,160,48,0.06), transparent);
+    opacity: 0;
+    transition: opacity var(--trans);
+  }
+
+  .answer-card:hover {
+    border-color: rgba(232,160,48,0.4);
+    background: rgba(232,160,48,0.06);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(232,160,48,0.12);
+  }
+  .answer-card:hover::before { opacity: 1; }
+
+  .answer-card.selected {
+    border-color: var(--orange);
+    background: rgba(232,160,48,0.12);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(232,160,48,0.2);
+  }
+  .answer-card.selected::before { opacity: 1; }
+
+  .answer-letter {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--muted);
+    transition: background var(--trans), border-color var(--trans), color var(--trans);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .answer-card.selected .answer-letter,
+  .answer-card:hover .answer-letter {
+    background: rgba(232,160,48,0.2);
+    border-color: rgba(232,160,48,0.5);
+    color: var(--orange);
+  }
+
+  .answer-text {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+  }
+
+  /* ─── Email Screen ──────────────────────────────────────────────────────── */
+  #screen-email {
+    background: var(--navy);
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .email-inner {
+    max-width: 480px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.4rem;
+  }
+
+  .email-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: rgba(232,160,48,0.1);
+    border: 1.5px solid rgba(232,160,48,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  .email-headline {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(1.8rem, 5vw, 2.6rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--white);
+  }
+
+  .email-sub {
+    font-size: 1rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .email-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .email-input {
+    width: 100%;
+    padding: 1rem 1.4rem;
+    background: var(--cream);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    color: var(--dark);
+    outline: none;
+    transition: border-color var(--trans), box-shadow var(--trans);
+  }
+  .email-input::placeholder { color: #9B8E7A; }
+  .email-input:focus {
+    border-color: var(--orange);
+    box-shadow: 0 0 0 4px rgba(232,160,48,0.15);
+  }
+
+  .email-form .btn-primary { width: 100%; justify-content: center; }
+
+  .email-note { font-size: 0.78rem; color: var(--muted); }
+
+  .skip-link {
+    font-size: 0.82rem;
+    color: var(--muted);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    background: none;
+    border: none;
+    transition: color var(--trans);
+  }
+  .skip-link:hover { color: var(--white); }
+
+  /* ─── Result Screen ─────────────────────────────────────────────────────── */
+  #screen-result {
+    background: var(--navy);
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1.5rem;
+    overflow-y: auto;
+  }
+
+  .result-inner {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+  }
+
+  .result-pre {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+
+  /* Collector Card */
+  .collector-card {
+    width: 100%;
+    background: var(--cream);
+    border-radius: 24px;
+    box-shadow: var(--shadow), 0 0 0 1px rgba(0,0,0,0.06);
+    overflow: hidden;
+    transform: scale(0.9);
+    opacity: 0;
+    transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+  }
+  .collector-card.revealed {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  .card-top-bar {
+    background: var(--navy);
+    padding: 0.9rem 1.6rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .card-series {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .card-series-badge {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--orange);
+    background: rgba(232,160,48,0.12);
+    border: 1px solid rgba(232,160,48,0.3);
+    padding: 0.25rem 0.65rem;
+    border-radius: 100px;
+  }
+
+  .card-body {
+    padding: 2rem 2rem 1.5rem;
+    color: var(--dark);
+  }
+
+  .card-archetype-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2rem, 6vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 0.6rem;
+  }
+
+  .card-tagline {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: #5A5040;
+    font-weight: 500;
+    margin-bottom: 1.6rem;
+    padding-bottom: 1.6rem;
+    border-bottom: 1.5px solid rgba(0,0,0,0.08);
+  }
+
+  .card-tasks {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .card-task {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #3A3428;
+  }
+
+  .card-task-arrow {
+    color: var(--orange);
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1.5;
+    flex-shrink: 0;
+  }
+
+  .card-hours-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--orange);
+    color: var(--navy);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius: 100px;
+    letter-spacing: 0.02em;
+  }
+
+  .card-footer {
+    background: var(--navy);
+    padding: 1.2rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .card-cta {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--orange);
+    letter-spacing: 0.04em;
+    text-decoration: none;
+  }
+
+  .card-footer-dots {
+    display: flex;
+    gap: 0.35rem;
+  }
+  .card-footer-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+  }
+  .card-footer-dot.active { background: var(--orange); }
+
+  /* Result Action Buttons */
+  .result-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .btn-share {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 1rem;
+    background: #000;
+    color: #fff;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background var(--trans), transform var(--trans);
+    text-decoration: none;
+  }
+  .btn-share:hover {
+    background: #1a1a1a;
+    transform: translateY(-2px);
+  }
+
+  .btn-retake {
+    width: 100%;
+    padding: 0.85rem;
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    color: var(--muted);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color var(--trans), color var(--trans);
+  }
+  .btn-retake:hover {
+    border-color: rgba(255,255,255,0.35);
+    color: var(--white);
+  }
+
+  /* ─── X Logo SVG ────────────────────────────────────────────────────────── */
+  .x-logo {
+    width: 16px;
+    height: 16px;
+    fill: #fff;
+    flex-shrink: 0;
+  }
+
+  /* ─── Mobile ────────────────────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .quiz-layout {
+      flex-direction: column;
+    }
+
+    .genie-panel {
+      width: 100%;
+      padding: 1.5rem;
+      border-right: none;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    #genie-container {
+      width: 180px;
+      height: 180px;
+    }
+
+    .genie-panel::before { display: none; }
+
+    .genie-expression-label { margin-top: 0.75rem; }
+
+    .quiz-content {
+      width: 100%;
+      padding: 1.5rem;
+    }
+
+    .progress-wrap { margin-bottom: 1.5rem; }
+
+    .card-body { padding: 1.5rem; }
+    .card-footer { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    .card-footer-dots { display: none; }
+
+    .collector-card { border-radius: 20px; }
+  }
+
+  @media (max-width: 380px) {
+    .landing-headline { font-size: 1.9rem; }
+    .card-archetype-name { font-size: 1.7rem; }
+  }
+
+  /* ─── Utility ───────────────────────────────────────────────────────────── */
+  .hidden { display: none !important; }
+
+  .shimmer {
+    background: linear-gradient(90deg,
+      rgba(255,255,255,0.04) 25%,
+      rgba(255,255,255,0.08) 50%,
+      rgba(255,255,255,0.04) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.8s infinite;
+  }
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SCREEN 1 — LANDING
+═══════════════════════════════════════════════════════════════════════════ -->
+<section id="screen-landing" class="screen active">
+  <div class="landing-inner">
+
+    <!-- // REPLACE: swap animoca-logo.png for the real Animoca Minds logo -->
+    <div class="logo-placeholder">ANIMOCA MINDS</div>
+
+    <div class="landing-badge">AI Personality Quiz</div>
+
+    <div class="genie-preview">
+      <!-- // REPLACE: landing preview image if desired -->
+      <span class="genie-fallback">🧞</span>
+    </div>
+
+    <h1 class="landing-headline">
+      What Type of<br/><span>Mind</span> Are You?
+    </h1>
+
+    <p class="landing-sub">
+      Answer 7 questions and discover the AI agent built for the way you work.
+    </p>
+
+    <button class="btn-primary" onclick="startQuiz()">
+      Find My Mind &nbsp;→
+    </button>
+
+    <p class="trust-line">Takes 2 minutes &nbsp;·&nbsp; Used by 10,000+ AI users</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SCREEN 2–8 — QUIZ
+═══════════════════════════════════════════════════════════════════════════ -->
+<section id="screen-quiz" class="screen">
+  <div class="quiz-layout">
+
+    <!-- LEFT: Genie Panel -->
+    <div class="genie-panel">
+      <!-- // REPLACE: swap genie-[1-7].png files here for each question expression -->
+      <div id="genie-container">
+        <!-- Placeholder shown until real images load -->
+        <div class="genie-placeholder" id="genie-placeholder">
+          <span class="genie-placeholder-icon">🧞</span>
+          <span class="genie-placeholder-label">Mind Genie</span>
+        </div>
+        <!-- Real images — added dynamically by JS -->
+      </div>
+      <div class="genie-expression-label" id="genie-expression-label">Thinking…</div>
+    </div>
+
+    <!-- RIGHT: Quiz Content -->
+    <div class="quiz-content">
+
+      <!-- Progress -->
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span class="progress-label">Question</span>
+          <span class="progress-count" id="progress-count">1 of 7</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill" style="width: 14.28%"></div>
+        </div>
+      </div>
+
+      <!-- Question Area -->
+      <div class="question-area">
+        <div class="question-slide" id="question-slide">
+          <p class="question-text" id="question-text"></p>
+          <div class="answers-grid" id="answers-grid"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SCREEN 9 — EMAIL CAPTURE
+═══════════════════════════════════════════════════════════════════════════ -->
+<section id="screen-email" class="screen">
+  <div class="email-inner">
+    <div class="email-icon">🧠</div>
+    <h2 class="email-headline">Your Mind is ready.</h2>
+    <p class="email-sub">
+      Enter your email to reveal your archetype and get early access to Animoca Minds.
+    </p>
+
+    <form class="email-form" onsubmit="handleEmailSubmit(event)">
+      <input
+        class="email-input"
+        type="email"
+        id="email-input"
+        placeholder="your@email.com"
+        autocomplete="email"
+        required
+      />
+      <button class="btn-primary" type="submit">
+        Reveal My Mind &nbsp;→
+      </button>
+    </form>
+
+    <p class="email-note">No spam. Early access only.</p>
+    <button class="skip-link" onclick="showResult()">Skip and see result →</button>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SCREEN 10 — RESULT CARD
+═══════════════════════════════════════════════════════════════════════════ -->
+<section id="screen-result" class="screen">
+  <div class="result-inner">
+    <p class="result-pre">Your AI Agent Archetype</p>
+
+    <!-- Collector Card -->
+    <div class="collector-card" id="collector-card">
+      <div class="card-top-bar">
+        <span class="card-series">ANIMOCA MINDS · COLLECTOR SERIES</span>
+        <span class="card-series-badge">#001</span>
+      </div>
+
+      <div class="card-body">
+        <h2 class="card-archetype-name" id="card-name">THE OPERATOR</h2>
+        <p class="card-tagline" id="card-tagline"></p>
+
+        <div class="card-tasks" id="card-tasks"></div>
+
+        <div class="card-hours-badge" id="card-hours">
+          ⚡ Saves you 8 hours per week
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <a class="card-cta" href="https://animocaminds.ai" target="_blank" rel="noopener">
+          Build Your Mind → animocaminds.ai
+        </a>
+        <div class="card-footer-dots">
+          <div class="card-footer-dot active"></div>
+          <div class="card-footer-dot"></div>
+          <div class="card-footer-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="result-actions">
+      <button class="btn-share" id="btn-share" onclick="shareOnX()">
+        <svg class="x-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.849L1.254 2.25H8.08l4.259 5.63 5.905-5.63Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+        Share on X →
+      </button>
+
+      <button class="btn-retake" onclick="retakeQuiz()">
+        ↩ Retake the quiz
+      </button>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ── Questions ─────────────────────────────────────────────────────────────── */
+const questions = [
+  {
+    text: "It's Sunday evening. What are you most likely doing?",
+    answers: [
+      "Meal prepping and getting organized for the week ahead",
+      "Working on a side project or something creative",
+      "Catching up on messages and planning who to reach out to",
+      "Researching something new I stumbled across this week"
+    ],
+    // // REPLACE: swap genie-[1-7].png files here for each question expression
+    genieImage: "genie-thinking.png",
+    genieLabel: "Thinking…"
+  },
+  {
+    text: "What eats most of your time during the week?",
+    answers: [
+      "Admin, emails, and scheduling that never seems to end",
+      "Research and staying on top of information in my field",
+      "Managing logistics — travel, bookings, coordination",
+      "Creating content, building, or making things from scratch"
+    ],
+    genieImage: "genie-angry.png",
+    genieLabel: "Feeling the pain…"
+  },
+  {
+    text: "Your phone buzzes at 9am Monday. What's it most likely about?",
+    answers: [
+      "A deal, opportunity, or client I've been chasing",
+      "A project update or task that needs my attention",
+      "A trip, event, or plan that needs coordinating",
+      "Something in the market or industry I need to act on"
+    ],
+    genieImage: "genie-surprised.png",
+    genieLabel: "Surprised!"
+  },
+  {
+    text: "If you could hand one thing to an AI agent today, what would it be?",
+    answers: [
+      "All my emails and follow ups",
+      "My research and daily information gathering",
+      "My content creation and creative output",
+      "My health, nutrition, and fitness tracking"
+    ],
+    genieImage: "genie-happy.png",
+    genieLabel: "Good choice!"
+  },
+  {
+    text: "How would your closest friend describe the way you work?",
+    answers: [
+      "Always hustling, always has ten things on the go",
+      "Methodical and thorough, never rushes a decision",
+      "Creative and spontaneous, full of ideas",
+      "Strategic and focused, plays the long game"
+    ],
+    genieImage: "genie-confident.png",
+    genieLabel: "Getting clearer…"
+  },
+  {
+    text: "What keeps you up at night?",
+    answers: [
+      "Missing an opportunity because I wasn't paying attention",
+      "Falling behind on my health or personal goals",
+      "Dropping the ball on something important for someone else",
+      "Not making enough progress on what I'm building"
+    ],
+    genieImage: "genie-excited.png",
+    genieLabel: "Almost there!"
+  },
+  {
+    text: "In an ideal world, what does your perfect day look like?",
+    answers: [
+      "Closing deals and making things happen with the right people",
+      "Exploring somewhere new without a single logistical worry",
+      "Deep in a creative flow, building something I'm proud of",
+      "Running a tight system where everything just works"
+    ],
+    genieImage: "genie-final.png",
+    genieLabel: "Ready to reveal…"
+  }
+];
+
+/* ── Scoring Matrix ─────────────────────────────────────────────────────────── */
+const scoringMatrix = {
+  q1: {
+    a1: { Nutritionist: 2, Coach: 1 },
+    a2: { Creative: 2, Builder: 1 },
+    a3: { Connector: 2, InboxZero: 1 },
+    a4: { Analyst: 2, Builder: 1 }
+  },
+  q2: {
+    a1: { InboxZero: 2, Operator: 1 },
+    a2: { Analyst: 2, Strategist: 1 },
+    a3: { Traveller: 2, Connector: 1 },
+    a4: { Seller: 2, Creative: 1 }
+  },
+  q3: {
+    a1: { Closer: 2, Seller: 1 },
+    a2: { Shipper: 2, Operator: 1 },
+    a3: { Traveller: 2, Connector: 1 },
+    a4: { Analyst: 2, Closer: 1 }
+  },
+  q4: {
+    a1: { InboxZero: 2, Connector: 1 },
+    a2: { Analyst: 2, Strategist: 1 },
+    a3: { Creative: 2, Seller: 1 },
+    a4: { Coach: 2, Nutritionist: 1 }
+  },
+  q5: {
+    a1: { Operator: 2, Closer: 1 },
+    a2: { Strategist: 2, Analyst: 1 },
+    a3: { Creative: 2, Builder: 1 },
+    a4: { Strategist: 2, Shipper: 1 }
+  },
+  q6: {
+    a1: { Analyst: 2, Closer: 1 },
+    a2: { Coach: 2, Nutritionist: 1 },
+    a3: { Connector: 2, InboxZero: 1 },
+    a4: { Shipper: 2, Builder: 1 }
+  },
+  q7: {
+    a1: { Closer: 2, Seller: 1 },
+    a2: { Traveller: 2, Connector: 1 },
+    a3: { Builder: 2, Creative: 1 },
+    a4: { Operator: 2, Shipper: 1 }
+  }
+};
+
+/* ── Archetypes Data ────────────────────────────────────────────────────────── */
+const archetypes = {
+  Operator: {
+    name: "THE OPERATOR",
+    tagline: "You keep everything running. Your Mind makes sure nothing stops.",
+    tasks: [
+      "Manages your schedule, reminders, and daily task flow",
+      "Handles follow ups so nothing falls through the cracks",
+      "Keeps your inbox and to-do list under control 24/7"
+    ],
+    hours: "Saves you 8 hours per week"
+  },
+  Closer: {
+    name: "THE CLOSER",
+    tagline: "You close. Your Mind keeps the pipeline full.",
+    tasks: [
+      "Tracks leads, opportunities, and deals across channels",
+      "Drafts outreach and follow up messages in your voice",
+      "Alerts you when it's time to act on a warm opportunity"
+    ],
+    hours: "Saves you 8 hours per week"
+  },
+  Strategist: {
+    name: "THE STRATEGIST",
+    tagline: "You think big. Your Mind handles the detail.",
+    tasks: [
+      "Synthesizes information from multiple sources into clear briefings",
+      "Monitors industry trends and flags what matters to your goals",
+      "Prepares research and analysis before you need to ask"
+    ],
+    hours: "Saves you 7 hours per week"
+  },
+  InboxZero: {
+    name: "THE INBOX ZERO",
+    tagline: "You communicate for a living. Your Mind keeps you on top.",
+    tasks: [
+      "Sorts, prioritizes, and drafts responses to your emails",
+      "Flags urgent messages and filters out the noise",
+      "Tracks open threads and reminds you who needs a reply"
+    ],
+    hours: "Saves you 9 hours per week"
+  },
+  Nutritionist: {
+    name: "THE NUTRITIONIST",
+    tagline: "You live with intention. Your Mind keeps you on track.",
+    tasks: [
+      "Plans your weekly meals based on your goals and preferences",
+      "Tracks your nutrition and flags when you are off course",
+      "Handles grocery lists and recipe suggestions automatically"
+    ],
+    hours: "Saves you 5 hours per week"
+  },
+  Coach: {
+    name: "THE COACH",
+    tagline: "You optimize everything. Your Mind tracks the numbers.",
+    tasks: [
+      "Monitors your workouts, progress, and recovery patterns",
+      "Sends daily check ins and keeps you accountable to your goals",
+      "Adjusts your plan based on how you are actually performing"
+    ],
+    hours: "Saves you 4 hours per week"
+  },
+  Shipper: {
+    name: "THE SHIPPER",
+    tagline: "You build and ship. Your Mind manages the chaos.",
+    tasks: [
+      "Runs your sprints, tracks tasks, and flags blockers",
+      "Keeps your team aligned without you micromanaging",
+      "Documents progress and prepares updates automatically"
+    ],
+    hours: "Saves you 7 hours per week"
+  },
+  Traveller: {
+    name: "THE TRAVELLER",
+    tagline: "You explore. Your Mind handles every detail.",
+    tasks: [
+      "Plans trips end to end — flights, hotels, and itineraries",
+      "Monitors prices and alerts you to the best windows to book",
+      "Coordinates timing across multiple people without the back and forth"
+    ],
+    hours: "Saves you 6 hours per trip"
+  },
+  Creative: {
+    name: "THE CREATIVE",
+    tagline: "You have the vision. Your Mind brings it to life.",
+    tasks: [
+      "Researches trends and surfaces ideas before you hit a blank page",
+      "Drafts, reviews, and refines creative output in your style",
+      "Repurposes your content across formats and platforms automatically"
+    ],
+    hours: "Saves you 8 hours per week"
+  },
+  Builder: {
+    name: "THE BUILDER",
+    tagline: "You imagine it. Your Mind builds the system.",
+    tasks: [
+      "Structures your project architecture and keeps it clean",
+      "Handles the repetitive build tasks so you stay in flow",
+      "Documents as you go so nothing gets lost"
+    ],
+    hours: "Saves you 10 hours per week"
+  },
+  Seller: {
+    name: "THE SELLER",
+    tagline: "You make it. Your Mind runs the business.",
+    tasks: [
+      "Researches market trends and finds opportunities before they peak",
+      "Generates listings, product descriptions, and social content",
+      "Tracks performance and tells you what to do more of"
+    ],
+    hours: "Saves you 8 hours per week"
+  },
+  Connector: {
+    name: "THE CONNECTOR",
+    tagline: "You bring people together. Your Mind makes it happen.",
+    tasks: [
+      "Plans events end to end — venue, lineup, logistics, and promo",
+      "Maps your network and identifies who can help make it better",
+      "Tracks conversations and reminds you who to follow up with"
+    ],
+    hours: "Saves you 7 hours per week"
+  },
+  Analyst: {
+    name: "THE ANALYST",
+    tagline: "You read signals others miss. Your Mind never stops watching.",
+    tasks: [
+      "Monitors your key sources 24/7 and surfaces only what matters",
+      "Sends you a daily briefing before you need to ask for it",
+      "Flags emerging trends and opportunities before they go mainstream"
+    ],
+    hours: "Saves you 10 hours per week"
+  }
+};
+
+/* ── State ──────────────────────────────────────────────────────────────────── */
+let currentQuestion = 0;
+let scores = {};
+let answers = {};
+let currentArchetype = null;
+let advanceTimer = null;
+
+/* ── Genie image element cache ──────────────────────────────────────────────── */
+const genieImgEls = {};
+
+function preloadGenieImages() {
+  const container = document.getElementById('genie-container');
+  questions.forEach((q, i) => {
+    const img = document.createElement('img');
+    img.className = 'genie-img';
+    img.alt = q.genieLabel;
+    // // REPLACE: swap genie-[1-7].png files here for each question expression
+    img.src = q.genieImage;
+    img.onload = () => {
+      // Image loaded — hide the placeholder if this is the current question
+      if (i === currentQuestion) {
+        document.getElementById('genie-placeholder').classList.add('hidden');
+        img.classList.add('visible');
+      }
+    };
+    img.onerror = () => {
+      // Image not found — placeholder stays visible (graceful degradation)
+    };
+    container.appendChild(img);
+    genieImgEls[i] = img;
+  });
+}
+
+function setGenieExpression(qIndex) {
+  // Hide all images
+  Object.values(genieImgEls).forEach(el => el.classList.remove('visible'));
+
+  const img = genieImgEls[qIndex];
+  if (!img) return;
+
+  if (img.complete && img.naturalWidth > 0) {
+    // Image already loaded — show it immediately, hide placeholder
+    document.getElementById('genie-placeholder').classList.add('hidden');
+    img.classList.add('visible');
+  } else {
+    // Not loaded yet — show placeholder until it loads
+    document.getElementById('genie-placeholder').classList.remove('hidden');
+    img.onload = () => {
+      document.getElementById('genie-placeholder').classList.add('hidden');
+      img.classList.add('visible');
+    };
+  }
+
+  document.getElementById('genie-expression-label').textContent =
+    questions[qIndex].genieLabel;
+}
+
+/* ── Screen transitions ─────────────────────────────────────────────────────── */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+  });
+  const el = document.getElementById(id);
+  if (el) {
+    // Force reflow for transition
+    requestAnimationFrame(() => {
+      el.classList.add('active');
+      el.scrollTop = 0;
+    });
+  }
+}
+
+/* ── Quiz flow ──────────────────────────────────────────────────────────────── */
+function startQuiz() {
+  currentQuestion = 0;
+  scores = {};
+  answers = {};
+  currentArchetype = null;
+  preloadGenieImages();
+  renderQuestion(0);
+  showScreen('screen-quiz');
+}
+
+function renderQuestion(index, direction = 'forward') {
+  const slide = document.getElementById('question-slide');
+  const q = questions[index];
+
+  // Slide out
+  slide.classList.add(direction === 'forward' ? 'exiting' : 'entering');
+
+  setTimeout(() => {
+    // Update content
+    document.getElementById('question-text').textContent = q.text;
+
+    const grid = document.getElementById('answers-grid');
+    grid.innerHTML = '';
+    const letters = ['A', 'B', 'C', 'D'];
+    q.answers.forEach((answer, i) => {
+      const card = document.createElement('div');
+      card.className = 'answer-card';
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('aria-label', answer);
+
+      card.innerHTML = `
+        <span class="answer-letter">${letters[i]}</span>
+        <span class="answer-text">${answer}</span>
+      `;
+
+      card.addEventListener('click', () => selectAnswer(i, card));
+      card.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          selectAnswer(i, card);
+        }
+      });
+
+      grid.appendChild(card);
+    });
+
+    // Update progress
+    const pct = ((index + 1) / questions.length) * 100;
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-count').textContent =
+      `${index + 1} of ${questions.length}`;
+
+    // Slide in
+    slide.classList.remove('exiting', 'entering');
+    slide.classList.add(direction === 'forward' ? 'entering' : 'exiting');
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        slide.classList.remove('entering', 'exiting');
+      });
+    });
+
+    // Update genie
+    setGenieExpression(index);
+
+  }, 220);
+}
+
+function selectAnswer(answerIndex, cardEl) {
+  if (advanceTimer) return; // prevent double-click during advance
+
+  // Visual selection
+  document.querySelectorAll('.answer-card').forEach(c => c.classList.remove('selected'));
+  cardEl.classList.add('selected');
+
+  // Score
+  const qKey = `q${currentQuestion + 1}`;
+  const aKey = `a${answerIndex + 1}`;
+  const matrix = scoringMatrix[qKey]?.[aKey] ?? {};
+  answers[currentQuestion] = answerIndex;
+
+  Object.entries(matrix).forEach(([archetype, pts]) => {
+    scores[archetype] = (scores[archetype] ?? 0) + pts;
+  });
+
+  // Advance after short delay
+  advanceTimer = setTimeout(() => {
+    advanceTimer = null;
+    if (currentQuestion < questions.length - 1) {
+      currentQuestion++;
+      renderQuestion(currentQuestion, 'forward');
+    } else {
+      // Quiz complete — go to email capture
+      showScreen('screen-email');
+    }
+  }, 300);
+}
+
+/* ── Scoring ────────────────────────────────────────────────────────────────── */
+function computeResult() {
+  const sorted = Object.entries(scores).sort((a, b) => {
+    if (b[1] !== a[1]) return b[1] - a[1];
+    return a[0].localeCompare(b[0]); // tie-break alphabetically
+  });
+
+  // Fallback to Operator if somehow no scores recorded
+  const winner = sorted[0]?.[0] ?? 'Operator';
+  return archetypes[winner] ?? archetypes.Operator;
+}
+
+/* ── Email Capture ──────────────────────────────────────────────────────────── */
+function handleEmailSubmit(event) {
+  event.preventDefault();
+  const email = document.getElementById('email-input').value.trim();
+
+  if (!email) return;
+
+  // // REPLACE: connect to your email capture backend or Mailchimp here
+  const captureData = {
+    email,
+    timestamp: new Date().toISOString(),
+    archetype: currentArchetype?.name ?? 'Unknown',
+    scores: { ...scores }
+  };
+  localStorage.setItem('findyourmind_capture', JSON.stringify(captureData));
+
+  showResult();
+}
+
+function showResult() {
+  currentArchetype = computeResult();
+  populateResultCard(currentArchetype);
+  showScreen('screen-result');
+
+  // Trigger card reveal animation after paint
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      document.getElementById('collector-card').classList.add('revealed');
+    }, 80);
+  });
+}
+
+/* ── Result Card ────────────────────────────────────────────────────────────── */
+function populateResultCard(archetype) {
+  document.getElementById('card-name').textContent = archetype.name;
+  document.getElementById('card-tagline').textContent = archetype.tagline;
+  document.getElementById('card-hours').innerHTML = `⚡ ${archetype.hours}`;
+
+  const tasksEl = document.getElementById('card-tasks');
+  tasksEl.innerHTML = archetype.tasks
+    .map(t => `
+      <div class="card-task">
+        <span class="card-task-arrow">→</span>
+        <span>${t}</span>
+      </div>
+    `)
+    .join('');
+}
+
+/* ── Share on X ─────────────────────────────────────────────────────────────── */
+function shareOnX() {
+  if (!currentArchetype) return;
+  const pageUrl = window.location.href;
+  const tweetText =
+    `I just discovered my AI agent type with @AnimocaMinds 🧠\n\n` +
+    `I am ${currentArchetype.name}\n\n` +
+    `"${currentArchetype.tagline}"\n\n` +
+    `Find yours → ${pageUrl} #AnimocaMinds #AIAgent #FindYourMind`;
+
+  window.open(
+    `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`,
+    '_blank',
+    'noopener,noreferrer,width=600,height=400'
+  );
+}
+
+/* ── Retake ──────────────────────────────────────────────────────────────────── */
+function retakeQuiz() {
+  // Reset card state so animation replays
+  document.getElementById('collector-card').classList.remove('revealed');
+  // Clear genie images for re-init
+  const container = document.getElementById('genie-container');
+  const placeholder = document.getElementById('genie-placeholder');
+  Array.from(container.querySelectorAll('.genie-img')).forEach(el => el.remove());
+  Object.keys(genieImgEls).forEach(k => delete genieImgEls[k]);
+  placeholder.classList.remove('hidden');
+  // Clear email input
+  document.getElementById('email-input').value = '';
+  startQuiz();
+}
+
+/* ── Init ────────────────────────────────────────────────────────────────────── */
+// Landing screen is shown by default via .active class
+</script>
+</body>
+</html>
