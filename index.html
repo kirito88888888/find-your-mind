@@ -1264,7 +1264,7 @@
   .username-input:focus { border-color: #E8A030; box-shadow: 0 0 0 3px rgba(232,160,48,0.15); }
   .username-input::placeholder { color: #9B8E7A; }
 
-  /* ── Result card — split artwork / text panel ──────────────────────────── */
+  /* ── Result card — full image + dynamic overlay ─────────────────────────── */
   .card-image-wrap {
     width: 100%;
     display: flex;
@@ -1276,79 +1276,51 @@
     width: 1080px;
     height: 1350px;
     transform-origin: top center;
-    display: flex;
-    flex-direction: column;
+    position: relative;
     border-radius: 24px;
     overflow: hidden;
     box-shadow: 0 16px 64px rgba(0,0,0,0.45);
   }
-  /* TOP: artwork — 75% of card height = 1012.5px, cropped to top of image */
-  .card-artwork {
-    flex: 0 0 1013px;
-    overflow: hidden;
-    position: relative;
-  }
+  /* Full card image — no cropping */
   .card-bg-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: top;
     display: block;
   }
-  /* BOTTOM: HTML brown panel — remaining 337px */
-  .card-panel {
-    flex: 1;
-    background: #8B5E2A;
-    padding: 44px 64px 48px;
+  /* Transparent overlay covering 78%–95% of card height (the brown panel area) */
+  .card-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 78%;
+    bottom: 5%;
+    padding: 0 64px;
     display: flex;
     flex-direction: column;
-    gap: 0;
+    justify-content: space-between;
+    pointer-events: none;
   }
-  .card-panel-label {
-    font-family: 'Inter', sans-serif;
-    font-size: 20px;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: rgba(245,240,232,0.65);
-    margin-bottom: 12px;
-  }
-  .card-panel-name {
+  .card-overlay-username {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 72px;
-    font-weight: 800;
-    color: #ffffff;
-    letter-spacing: -0.02em;
-    line-height: 1;
-    margin-bottom: 14px;
-  }
-  .card-panel-desc {
-    font-family: 'Inter', sans-serif;
-    font-size: 22px;
-    font-weight: 400;
-    color: rgba(245,240,232,0.8);
-    line-height: 1.4;
-    margin-bottom: 20px;
-  }
-  .card-panel-username {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 30px;
+    font-size: 36px;
     font-weight: 700;
     color: #ffffff;
-    margin-bottom: auto;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    word-break: break-all;
   }
-  .card-panel-footer {
+  .card-overlay-footer {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-top: 28px;
   }
-  .card-panel-footer span {
+  .card-overlay-footer span {
     font-family: 'Inter', sans-serif;
     font-size: 20px;
-    color: rgba(245,240,232,0.6);
+    color: rgba(245,240,232,0.7);
   }
-  .card-panel-footer .fp-center {
+  .card-overlay-footer .of-center {
     text-align: center;
     flex: 1;
   }
@@ -1512,26 +1484,22 @@
     <div class="result-main">
       <span class="result-eyebrow"><span class="dot"></span>Your AI Personality Type</span>
 
-      <!-- Collector card: artwork top (image, cropped) + text panel bottom (pure HTML) -->
+      <!-- Full card image with dynamic text overlay on the brown panel area -->
       <div class="card-image-wrap">
         <div class="card-image-outer" id="card-image-outer">
 
-          <!-- TOP: card PNG cropped to artwork only (top 75%) -->
+          <!-- Full card PNG — image provides YOU ARE, name, and description -->
           <!-- // REPLACE: card-[archetype].png files in root directory -->
-          <div class="card-artwork">
-            <img class="card-bg-img" id="card-bg-img" src="" alt="Result card artwork" />
-          </div>
+          <img class="card-bg-img" id="card-bg-img" src="" alt="Result card" />
 
-          <!-- BOTTOM: brown text panel — no image, all HTML/CSS -->
-          <div class="card-panel">
-            <div class="card-panel-label">YOU ARE</div>
-            <div class="card-panel-name" id="panel-name"></div>
-            <div class="card-panel-desc" id="panel-desc"></div>
-            <div class="card-panel-username" id="panel-username"></div>
-            <div class="card-panel-footer">
-              <span id="panel-serial"></span>
-              <span class="fp-center">hellominds.ai</span>
-              <span id="panel-date"></span>
+          <!-- Dynamic overlay: sits over 78–95% of card (brown panel area) -->
+          <!-- Only adds the 4 user-specific elements not baked into the image -->
+          <div class="card-overlay">
+            <div class="card-overlay-username" id="overlay-username"></div>
+            <div class="card-overlay-footer">
+              <span id="overlay-serial"></span>
+              <span class="of-center">hellominds.ai</span>
+              <span id="overlay-date"></span>
             </div>
           </div>
 
@@ -1905,15 +1873,13 @@ function formatDate(d) {
 }
 
 function populateResultCard(key, archetype) {
-  // Artwork: top portion of the card PNG
+  // Full card image — YOU ARE, name, and description are baked into the PNG
   document.getElementById('card-bg-img').src = archetypeCardImages[key] || '';
 
-  // HTML text panel — no duplication with image
-  document.getElementById('panel-name').textContent = archetype.displayName.toUpperCase();
-  document.getElementById('panel-desc').textContent = archetype.description;
-  document.getElementById('panel-username').textContent = xUsername || '';
-  document.getElementById('panel-serial').textContent = cardSerial;
-  document.getElementById('panel-date').textContent = formatDate(new Date());
+  // Dynamic overlay — only the 4 user-specific elements
+  document.getElementById('overlay-username').textContent = xUsername || '';
+  document.getElementById('overlay-serial').textContent = cardSerial;
+  document.getElementById('overlay-date').textContent = formatDate(new Date());
 }
 
 /* Scale card to fit viewport width */
