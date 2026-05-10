@@ -1502,29 +1502,23 @@ const questions = [
 ];
 
 const scoringMatrix = {
-  q1: { a1: { Nutritionist: 2, Coach: 1 }, a2: { Creative: 2, Builder: 1 }, a3: { Connector: 2, InboxZero: 1 }, a4: { Analyst: 2, Builder: 1 } },
-  q2: { a1: { InboxZero: 2, Operator: 1 }, a2: { Analyst: 2, Strategist: 1 }, a3: { Traveller: 2, Connector: 1 }, a4: { Seller: 2, Creative: 1 } },
-  q3: { a1: { Closer: 2, Seller: 1 }, a2: { Shipper: 2, Operator: 1 }, a3: { Traveller: 2, Connector: 1 }, a4: { Analyst: 2, Closer: 1 } },
-  q4: { a1: { InboxZero: 2, Connector: 1 }, a2: { Analyst: 2, Strategist: 1 }, a3: { Creative: 2, Seller: 1 }, a4: { Coach: 2, Nutritionist: 1 } },
-  q5: { a1: { Operator: 2, Closer: 1 }, a2: { Strategist: 2, Analyst: 1 }, a3: { Creative: 2, Builder: 1 }, a4: { Strategist: 2, Shipper: 1 } },
-  q6: { a1: { Analyst: 2, Closer: 1 }, a2: { Coach: 2, Nutritionist: 1 }, a3: { Connector: 2, InboxZero: 1 }, a4: { Shipper: 2, Builder: 1 } },
-  q7: { a1: { Closer: 2, Seller: 1 }, a2: { Traveller: 2, Connector: 1 }, a3: { Builder: 2, Creative: 1 }, a4: { Operator: 2, Shipper: 1 } }
+  q1: { a1: { Nutritionist: 2, Coach: 1 }, a2: { Executor: 2 }, a3: { Relay: 2 }, a4: { Strategist: 2, Executor: 1 } },
+  q2: { a1: { Relay: 2, Operator: 1 }, a2: { Strategist: 2 }, a3: { Operator: 2, Relay: 1 }, a4: { Closer: 2, Executor: 1 } },
+  q3: { a1: { Closer: 2 }, a2: { Executor: 2, Operator: 1 }, a3: { Operator: 2, Relay: 1 }, a4: { Strategist: 2, Closer: 1 } },
+  q4: { a1: { Relay: 2 }, a2: { Strategist: 2 }, a3: { Executor: 2, Closer: 1 }, a4: { Coach: 2, Nutritionist: 1 } },
+  q5: { a1: { Operator: 2, Closer: 1 }, a2: { Strategist: 2 }, a3: { Executor: 2 }, a4: { Strategist: 2, Executor: 1 } },
+  q6: { a1: { Strategist: 2, Closer: 1 }, a2: { Coach: 2, Nutritionist: 1 }, a3: { Relay: 2 }, a4: { Executor: 2 } },
+  q7: { a1: { Closer: 2 }, a2: { Operator: 2, Relay: 1 }, a3: { Executor: 2 }, a4: { Operator: 2, Executor: 1 } }
 };
 
 const archetypes = {
-  Operator:    { name: "THE OPERATOR",     tagline: "You keep everything running. Your Mind makes sure nothing stops.",            tasks: ["Manages your schedule, reminders, and daily task flow","Handles follow ups so nothing falls through the cracks","Keeps your inbox and to-do list under control 24/7"], hours: "Saves you 8 hours per week",  short: "8h / week" },
-  Closer:      { name: "THE CLOSER",       tagline: "You close. Your Mind keeps the pipeline full.",                                tasks: ["Tracks leads, opportunities, and deals across channels","Drafts outreach and follow up messages in your voice","Alerts you when it's time to act on a warm opportunity"], hours: "Saves you 8 hours per week",  short: "8h / week" },
-  Strategist:  { name: "THE STRATEGIST",   tagline: "You think big. Your Mind handles the detail.",                                 tasks: ["Synthesizes information from multiple sources into clear briefings","Monitors industry trends and flags what matters to your goals","Prepares research and analysis before you need to ask"], hours: "Saves you 7 hours per week",  short: "7h / week" },
-  InboxZero:   { name: "THE INBOX ZERO",   tagline: "You communicate for a living. Your Mind keeps you on top.",                    tasks: ["Sorts, prioritizes, and drafts responses to your emails","Flags urgent messages and filters out the noise","Tracks open threads and reminds you who needs a reply"], hours: "Saves you 9 hours per week",  short: "9h / week" },
-  Nutritionist:{ name: "THE NUTRITIONIST", tagline: "You live with intention. Your Mind keeps you on track.",                       tasks: ["Plans your weekly meals based on your goals and preferences","Tracks your nutrition and flags when you are off course","Handles grocery lists and recipe suggestions automatically"], hours: "Saves you 5 hours per week",  short: "5h / week" },
-  Coach:       { name: "THE COACH",        tagline: "You optimize everything. Your Mind tracks the numbers.",                       tasks: ["Monitors your workouts, progress, and recovery patterns","Sends daily check ins and keeps you accountable to your goals","Adjusts your plan based on how you are actually performing"], hours: "Saves you 4 hours per week",  short: "4h / week" },
-  Shipper:     { name: "THE SHIPPER",      tagline: "You build and ship. Your Mind manages the chaos.",                             tasks: ["Runs your sprints, tracks tasks, and flags blockers","Keeps your team aligned without you micromanaging","Documents progress and prepares updates automatically"], hours: "Saves you 7 hours per week",  short: "7h / week" },
-  Traveller:   { name: "THE TRAVELLER",    tagline: "You explore. Your Mind handles every detail.",                                 tasks: ["Plans trips end to end — flights, hotels, and itineraries","Monitors prices and alerts you to the best windows to book","Coordinates timing across multiple people without the back and forth"], hours: "Saves you 6 hours per trip", short: "6h / trip" },
-  Creative:    { name: "THE CREATIVE",     tagline: "You have the vision. Your Mind brings it to life.",                            tasks: ["Researches trends and surfaces ideas before you hit a blank page","Drafts, reviews, and refines creative output in your style","Repurposes your content across formats and platforms automatically"], hours: "Saves you 8 hours per week",  short: "8h / week" },
-  Builder:     { name: "THE BUILDER",      tagline: "You imagine it. Your Mind builds the system.",                                 tasks: ["Structures your project architecture and keeps it clean","Handles the repetitive build tasks so you stay in flow","Documents as you go so nothing gets lost"], hours: "Saves you 10 hours per week", short: "10h / week" },
-  Seller:      { name: "THE SELLER",       tagline: "You make it. Your Mind runs the business.",                                    tasks: ["Researches market trends and finds opportunities before they peak","Generates listings, product descriptions, and social content","Tracks performance and tells you what to do more of"], hours: "Saves you 8 hours per week",  short: "8h / week" },
-  Connector:   { name: "THE CONNECTOR",    tagline: "You bring people together. Your Mind makes it happen.",                        tasks: ["Plans events end to end — venue, lineup, logistics, and promo","Maps your network and identifies who can help make it better","Tracks conversations and reminds you who to follow up with"], hours: "Saves you 7 hours per week",  short: "7h / week" },
-  Analyst:     { name: "THE ANALYST",      tagline: "You read signals others miss. Your Mind never stops watching.",                tasks: ["Monitors your key sources 24/7 and surfaces only what matters","Sends you a daily briefing before you need to ask for it","Flags emerging trends and opportunities before they go mainstream"], hours: "Saves you 10 hours per week", short: "10h / week" }
+  Operator:    { name: "THE OPERATOR",    displayName: "The Operator",    description: "You are the reason things don't fall apart. Not because you micromanage - because you've already thought three steps ahead. Most people react. You've already prepared.",                                                                                                                                mindName: "General Assistant" },
+  Closer:      { name: "THE CLOSER",      displayName: "The Closer",      description: "You read people faster than most read situations. Every conversation is an opportunity - not because you're pushy, but because you genuinely believe in what you're building. You don't wait for deals to come to you.",                                                                                  mindName: "Sales Mind" },
+  Strategist:  { name: "THE STRATEGIST",  displayName: "The Strategist",  description: "Most people are in the detail. You're already at the conclusion. While others are heads down executing, you're thinking about what the next move should be. You don't just solve problems - you design systems that stop them from happening.",                                                           mindName: "Bizz Mind" },
+  Relay:       { name: "THE RELAY",       displayName: "The Relay",       description: "Information flows through you constantly. You're the link between people, decisions and next steps - and you know that the moment you slow down, everything else does too. You don't let that happen.",                                                                                                    mindName: "Email Manager" },
+  Nutritionist:{ name: "THE NUTRITIONIST",displayName: "The Nutritionist",description: "You know that the small daily choices compound into everything. Food isn't an afterthought - it's part of how you run.",                                                                                                                                                                                 mindName: "Personal Chef" },
+  Coach:       { name: "THE COACH",       displayName: "The Coach",       description: "You treat your body like a system to be optimised. You track, adjust, and iterate - not because you're obsessed, but because you know consistency is the only variable that actually matters.",                                                                                                           mindName: "Fitness Coach" },
+  Executor:    { name: "THE EXECUTOR",    displayName: "The Executor",    description: "You think in sprints. The gap between idea and done is where most people live - you treat it as a problem to be solved. Nothing sits on your list without a next action attached to it.",                                                                                                                 mindName: "Scrum Master" }
 };
 
 const archetypeKeys = Object.keys(archetypes);
@@ -1739,31 +1733,20 @@ function showResult() {
 window.showResult = showResult;
 
 function populateResultCard(key, archetype) {
-  document.getElementById('card-name').textContent = archetype.name;
-  document.getElementById('card-tagline').textContent = archetype.tagline;
-  document.getElementById('card-stat-text').textContent = archetype.hours;
-  document.getElementById('card-hero-hours').textContent = archetype.short;
+  document.getElementById('card-name').textContent = `You are ${archetype.displayName}`;
+  document.getElementById('card-tagline').textContent = archetype.description;
+  document.getElementById('card-stat-text').textContent = `Your ideal Mind — ${archetype.mindName}`;
+  document.getElementById('card-hero-hours').textContent = archetype.mindName;
   document.getElementById('card-serial').textContent = archetypeSerial(key);
 
-  // pick mascot expression based on archetype mood
   const heroExpr = {
     Operator: 'confident', Closer: 'confident', Strategist: 'thinking',
-    InboxZero: 'happy', Nutritionist: 'happy', Coach: 'confident',
-    Shipper: 'happy', Traveller: 'surprised', Creative: 'happy',
-    Builder: 'thinking', Seller: 'confident', Connector: 'happy',
-    Analyst: 'thinking'
+    Relay: 'happy', Nutritionist: 'happy', Coach: 'confident', Executor: 'happy'
   }[key] || 'confident';
   document.getElementById('card-hero-img').src = `mascot-${heroExpr}.png`;
 
-  const tasksEl = document.getElementById('card-tasks');
-  tasksEl.innerHTML = archetype.tasks.map(t => `
-    <div class="task">
-      <span class="task-bullet">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-      </span>
-      <span>${t}</span>
-    </div>
-  `).join('');
+  // Tasks removed — clear the section
+  document.getElementById('card-tasks').innerHTML = '';
 }
 
 /* ── Share ──────────────────────────────────────────────────────────────── */
@@ -1771,10 +1754,7 @@ function shareOnX() {
   if (!currentArchetype) return;
   const pageUrl = window.location.href;
   const tweetText =
-    `I just discovered my AI agent type with @AnimocaMinds 🧠\n\n` +
-    `I am ${currentArchetype.name}\n\n` +
-    `"${currentArchetype.tagline}"\n\n` +
-    `Find yours → ${pageUrl} #AnimocaMinds #AIAgent #FindYourMind`;
+    `I just found out I'm ${currentArchetype.displayName} - find out what type of AI user you are at ${pageUrl} #AnimocaMinds`;
   window.open(
     `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`,
     '_blank',
