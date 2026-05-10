@@ -1076,6 +1076,23 @@
     flex-direction: column;
     gap: 10px;
   }
+  .btn-copy {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 16px;
+    background: transparent;
+    color: var(--ink, #0A0E1A);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 15px;
+    border: 2px solid var(--ink, #0A0E1A);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: background var(--trans), color var(--trans), transform var(--trans);
+  }
+  .btn-copy:hover { background: var(--ink, #0A0E1A); color: #fff; transform: translateY(-2px); }
   .btn-share {
     display: flex;
     align-items: center;
@@ -1540,16 +1557,24 @@
       </div>
 
       <div class="result-actions">
-        <button class="btn-primary" style="width:100%;justify-content:center;" onclick="downloadCard()">
-          Download Card
+        <!-- 1. Claim CTA — dev team to replace href with archetype-specific URLs -->
+        <a class="btn-primary" href="https://hellominds.ai" target="_blank" rel="noopener" style="width:100%;justify-content:center;text-decoration:none;display:flex;align-items:center;">
+          Claim Your Personalized Mind
+        </a>
+
+        <!-- 2. Copy Card -->
+        <button class="btn-copy" id="btn-copy" onclick="copyCard()">
+          Copy Card
         </button>
+
+        <!-- 3. Share on X -->
         <button class="btn-share" onclick="shareOnX()">
           <svg class="x-logo" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.849L1.254 2.25H8.08l4.259 5.63 5.905-5.63Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
           </svg>
           Share on X
-          <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 5 7 7-7 7"/></svg>
         </button>
+
         <button class="btn-retake" onclick="retakeQuiz()">↩ Retake the quiz</button>
       </div>
     </div>
@@ -1930,15 +1955,17 @@ function scaleCard() {
 }
 window.addEventListener('resize', scaleCard);
 
-/* ── Download card ──────────────────────────────────────────────────────── */
-function downloadCard() {
+/* ── Copy card to clipboard ─────────────────────────────────────────────── */
+function copyCard() {
   const el = document.getElementById('card-image-outer');
+  const btn = document.getElementById('btn-copy');
   if (!el) return;
-  // Temporarily reset scale so html2canvas captures at full 1080×1350
+
   const prev = el.style.transform;
   const prevMb = el.style.marginBottom;
   el.style.transform = 'scale(1)';
   el.style.marginBottom = '0';
+
   html2canvas(el, {
     useCORS: true,
     allowTaint: true,
@@ -1949,16 +1976,28 @@ function downloadCard() {
   }).then(canvas => {
     el.style.transform = prev;
     el.style.marginBottom = prevMb;
-    const link = document.createElement('a');
-    link.download = 'my-mind-card.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
+    canvas.toBlob(blob => {
+      if (!blob) return;
+      try {
+        navigator.clipboard.write([
+          new ClipboardItem({ 'image/png': blob })
+        ]).then(() => {
+          if (btn) {
+            const orig = btn.textContent;
+            btn.textContent = 'Copied!';
+            setTimeout(() => { btn.textContent = orig; }, 2000);
+          }
+        });
+      } catch (_) {
+        // Clipboard API not supported — silently fail
+      }
+    }, 'image/png');
   }).catch(() => {
     el.style.transform = prev;
     el.style.marginBottom = prevMb;
   });
 }
-window.downloadCard = downloadCard;
+window.copyCard = copyCard;
 
 /* ── Share ──────────────────────────────────────────────────────────────── */
 function shareOnX() {
