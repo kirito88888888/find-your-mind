@@ -1238,48 +1238,7 @@
     .card-archetype-name { font-size: 26px; }
   }
   /* ── Username screen ───────────────────────────────────────────────────── */
-  #screen-username .screen-shell { padding-bottom: 32px; }
-  .username-main { display:flex; align-items:center; justify-content:center; min-height:100%; }
-  .username-card {
-    background: var(--cream, #F5F0E8);
-    border-radius: 24px;
-    padding: 2.5rem 2rem;
-    max-width: 420px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.2rem;
-    text-align: center;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
-  }
-  .username-card h2 {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 1.9rem;
-    font-weight: 800;
-    color: #0A0E1A;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
-  }
-  .username-card p {
-    font-size: 1rem;
-    color: #5A5040;
-    line-height: 1.5;
-  }
-  .username-input {
-    width: 100%;
-    padding: 0.9rem 1.2rem;
-    background: #fff;
-    border: 2px solid rgba(0,0,0,0.1);
-    border-radius: 12px;
-    font-family: 'Inter', sans-serif;
-    font-size: 1rem;
-    color: #0A0E1A;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .username-input:focus { border-color: #E8A030; box-shadow: 0 0 0 3px rgba(232,160,48,0.15); }
-  .username-input::placeholder { color: #9B8E7A; }
+
 
   /* ── Result card — full image + dynamic overlay ─────────────────────────── */
   .card-image-wrap {
@@ -1346,14 +1305,6 @@
     font-weight: 400;
     color: rgba(245,240,232,0.85);
     line-height: 1.4;
-  }
-  .card-overlay-username {
-    font-family: 'Manrope', sans-serif;
-    font-size: 26px;
-    font-weight: 700;
-    color: #ffffff;
-    letter-spacing: -0.01em;
-    line-height: 1.1;
   }
   .card-overlay-footer {
     display: flex;
@@ -1488,38 +1439,12 @@
           </button>
         </form>
         <p class="email-note">No spam. Early access only.</p>
-        <button class="skip-link" onclick="showScreen('screen-username')">Skip and see result →</button>
+        <button class="skip-link" onclick="showResult()">Skip and see result →</button>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════════════════
-     SCREEN 3b — X USERNAME
-═════════════════════════════════════════════════════════════════════════ -->
-<section id="screen-username" class="screen">
-  <div class="screen-shell">
-    <div class="username-main">
-      <div class="username-card">
-        <h2>One last thing</h2>
-        <p>What's your X handle?</p>
-        <input
-          class="username-input"
-          type="text"
-          id="username-input"
-          placeholder="@yourhandle"
-          autocomplete="off"
-          spellcheck="false"
-        />
-        <button class="btn-primary" style="width:100%;justify-content:center;" onclick="handleUsernameSubmit()">
-          See My Result
-          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" aria-hidden="true"><path d="M5 12h14"/><path d="m13 5 7 7-7 7"/></svg>
-        </button>
-        <button class="skip-link" onclick="handleUsernameSubmit(true)">Skip</button>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- ════════════════════════════════════════════════════════════════════════
      SCREEN 4 — RESULT
@@ -1544,7 +1469,7 @@
               <div class="card-overlay-label">YOU ARE</div>
               <div class="card-overlay-name" id="overlay-name"></div>
               <div class="card-overlay-desc" id="overlay-desc"></div>
-              <div class="card-overlay-username" id="overlay-username"></div>
+
             </div>
             <div class="card-overlay-footer">
               <span id="overlay-serial"></span>
@@ -1702,7 +1627,6 @@ let answers = {};
 let currentArchetype = null;
 let currentArchetypeKey = null;
 let advanceTimer = null;
-let xUsername = '';
 let cardSerial = '';
 const mascotImgEls = {};
 
@@ -1890,20 +1814,9 @@ function handleEmailSubmit(event) {
     scores: { ...scores }
   };
   try { localStorage.setItem('findyourmind_capture', JSON.stringify(captureData)); } catch (_) {}
-  showScreen('screen-username');
-}
-window.handleEmailSubmit = handleEmailSubmit;
-
-function handleUsernameSubmit(skip) {
-  if (!skip) {
-    const raw = document.getElementById('username-input').value.trim();
-    xUsername = raw ? (raw.startsWith('@') ? raw : '@' + raw) : '@anonymous';
-  } else {
-    xUsername = '@anonymous';
-  }
   showResult();
 }
-window.handleUsernameSubmit = handleUsernameSubmit;
+window.handleEmailSubmit = handleEmailSubmit;
 
 function showResult() {
   const result = computeResult();
@@ -1939,7 +1852,6 @@ function populateResultCard(key, archetype) {
   // All panel text rendered dynamically
   document.getElementById('overlay-name').textContent = archetype.displayName.toUpperCase();
   document.getElementById('overlay-desc').textContent = archetype.description;
-  document.getElementById('overlay-username').textContent = xUsername || '@anonymous';
   document.getElementById('overlay-serial').textContent = cardSerial;
   document.getElementById('overlay-date').textContent = formatDate(new Date());
 }
@@ -2015,8 +1927,6 @@ window.shareOnX = shareOnX;
 
 function retakeQuiz() {
   document.getElementById('email-input').value = '';
-  document.getElementById('username-input').value = '';
-  xUsername = '';
   cardSerial = '';
   startQuiz();
 }
