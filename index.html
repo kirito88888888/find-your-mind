@@ -1291,14 +1291,14 @@
   /* Transparent overlay covering the full blank brown panel (78%–100%) */
   .card-overlay {
     position: absolute;
+    top: 78%;
     left: 0;
     right: 0;
-    top: 78%;
-    bottom: 0;
-    padding: 80px 64px 40px;
+    padding: 20px 24px 16px 24px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 8px;
     pointer-events: none;
   }
   .card-overlay-label {
@@ -1308,7 +1308,6 @@
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: rgba(245,240,232,0.6);
-    margin-bottom: 16px;
   }
   .card-overlay-name {
     font-family: 'Space Grotesk', sans-serif;
@@ -1317,7 +1316,6 @@
     color: #ffffff;
     letter-spacing: -0.02em;
     line-height: 1;
-    margin-bottom: 26px;
   }
   .card-overlay-desc {
     font-family: 'Inter', sans-serif;
@@ -1325,7 +1323,6 @@
     font-weight: 700;
     color: rgba(245,240,232,0.9);
     line-height: 1.45;
-    margin-bottom: 28px;
   }
   .card-overlay-username {
     font-family: 'Space Grotesk', sans-serif;
@@ -1339,8 +1336,6 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-top: auto;
-    padding-top: 10px;
   }
   .card-overlay-footer span {
     font-family: 'Inter', sans-serif;
