@@ -1264,72 +1264,93 @@
   .username-input:focus { border-color: #E8A030; box-shadow: 0 0 0 3px rgba(232,160,48,0.15); }
   .username-input::placeholder { color: #9B8E7A; }
 
-  /* ── Result card — image background version ────────────────────────────── */
+  /* ── Result card — split artwork / text panel ──────────────────────────── */
   .card-image-wrap {
     width: 100%;
     display: flex;
     justify-content: center;
     margin-bottom: 1rem;
   }
+  /* Outer shell: 1080×1350 native, scaled down to fit viewport */
   .card-image-outer {
-    /* native size 1080×1350, scaled to fit screen */
     width: 1080px;
     height: 1350px;
     transform-origin: top center;
-    position: relative;
+    display: flex;
+    flex-direction: column;
     border-radius: 24px;
     overflow: hidden;
     box-shadow: 0 16px 64px rgba(0,0,0,0.45);
   }
+  /* TOP: artwork — 75% of card height = 1012.5px, cropped to top of image */
+  .card-artwork {
+    flex: 0 0 1013px;
+    overflow: hidden;
+    position: relative;
+  }
   .card-bg-img {
-    position: absolute;
-    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: top;
     display: block;
   }
-  .card-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 56px 64px 52px;
+  /* BOTTOM: HTML brown panel — remaining 337px */
+  .card-panel {
+    flex: 1;
+    background: #8B5E2A;
+    padding: 44px 64px 48px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 0;
   }
-  .card-overlay-username {
+  .card-panel-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.65);
+    margin-bottom: 12px;
+  }
+  .card-panel-name {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 52px;
+    font-size: 72px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+  .card-panel-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: rgba(245,240,232,0.8);
+    line-height: 1.4;
+    margin-bottom: 20px;
+  }
+  .card-panel-username {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 30px;
     font-weight: 700;
     color: #ffffff;
-    letter-spacing: -0.01em;
-    line-height: 1.05;
-    word-break: break-all;
+    margin-bottom: auto;
   }
-  .card-overlay-serial {
-    font-family: 'Inter', sans-serif;
-    font-size: 24px;
-    font-weight: 500;
-    color: rgba(245,240,232,0.75);
-    letter-spacing: 0.04em;
-  }
-  .card-overlay-row {
+  .card-panel-footer {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-top: 18px;
+    margin-top: 28px;
   }
-  .card-overlay-date {
+  .card-panel-footer span {
     font-family: 'Inter', sans-serif;
-    font-size: 22px;
-    color: rgba(245,240,232,0.7);
+    font-size: 20px;
+    color: rgba(245,240,232,0.6);
   }
-  .card-overlay-url {
-    font-family: 'Inter', sans-serif;
-    font-size: 22px;
-    color: rgba(245,240,232,0.7);
+  .card-panel-footer .fp-center {
+    text-align: center;
+    flex: 1;
   }
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -1491,19 +1512,29 @@
     <div class="result-main">
       <span class="result-eyebrow"><span class="dot"></span>Your AI Personality Type</span>
 
-      <!-- Image-background collector card — 1080×1350 scaled to fit -->
+      <!-- Collector card: artwork top (image, cropped) + text panel bottom (pure HTML) -->
       <div class="card-image-wrap">
         <div class="card-image-outer" id="card-image-outer">
-          <!-- // REPLACE: card PNG files in root: card-operator.png, card-closer.png, etc. -->
-          <img class="card-bg-img" id="card-bg-img" src="" alt="Result card" />
-          <div class="card-overlay">
-            <div class="card-overlay-username" id="overlay-username"></div>
-            <div class="card-overlay-serial" id="overlay-serial"></div>
-            <div class="card-overlay-row">
-              <div class="card-overlay-date" id="overlay-date"></div>
-              <div class="card-overlay-url">hellominds.ai</div>
+
+          <!-- TOP: card PNG cropped to artwork only (top 75%) -->
+          <!-- // REPLACE: card-[archetype].png files in root directory -->
+          <div class="card-artwork">
+            <img class="card-bg-img" id="card-bg-img" src="" alt="Result card artwork" />
+          </div>
+
+          <!-- BOTTOM: brown text panel — no image, all HTML/CSS -->
+          <div class="card-panel">
+            <div class="card-panel-label">YOU ARE</div>
+            <div class="card-panel-name" id="panel-name"></div>
+            <div class="card-panel-desc" id="panel-desc"></div>
+            <div class="card-panel-username" id="panel-username"></div>
+            <div class="card-panel-footer">
+              <span id="panel-serial"></span>
+              <span class="fp-center">hellominds.ai</span>
+              <span id="panel-date"></span>
             </div>
           </div>
+
         </div>
       </div>
 
@@ -1874,13 +1905,15 @@ function formatDate(d) {
 }
 
 function populateResultCard(key, archetype) {
-  // Card background image
+  // Artwork: top portion of the card PNG
   document.getElementById('card-bg-img').src = archetypeCardImages[key] || '';
 
-  // Overlay text
-  document.getElementById('overlay-username').textContent = xUsername || '';
-  document.getElementById('overlay-serial').textContent = cardSerial;
-  document.getElementById('overlay-date').textContent = formatDate(new Date());
+  // HTML text panel — no duplication with image
+  document.getElementById('panel-name').textContent = archetype.displayName.toUpperCase();
+  document.getElementById('panel-desc').textContent = archetype.description;
+  document.getElementById('panel-username').textContent = xUsername || '';
+  document.getElementById('panel-serial').textContent = cardSerial;
+  document.getElementById('panel-date').textContent = formatDate(new Date());
 }
 
 /* Scale card to fit viewport width */
