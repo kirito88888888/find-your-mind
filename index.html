@@ -1443,7 +1443,7 @@
           </button>
         </form>
         <p class="email-note">No spam. Early access only.</p>
-        <button class="skip-link" onclick="showResult()">Skip and see result →</button>
+        <button class="skip-link" onclick="showScreen('screen-username')">Skip and see result →</button>
       </div>
     </div>
   </div>
@@ -1726,6 +1726,8 @@ function showScreen(id) {
   }
 }
 
+window.showScreen = showScreen;
+
 /* ── Quiz flow ──────────────────────────────────────────────────────────── */
 function startQuiz() {
   currentQuestion = 0;
@@ -1837,9 +1839,9 @@ window.handleEmailSubmit = handleEmailSubmit;
 function handleUsernameSubmit(skip) {
   if (!skip) {
     const raw = document.getElementById('username-input').value.trim();
-    xUsername = raw ? (raw.startsWith('@') ? raw : '@' + raw) : '';
+    xUsername = raw ? (raw.startsWith('@') ? raw : '@' + raw) : '@anonymous';
   } else {
-    xUsername = '';
+    xUsername = '@anonymous';
   }
   showResult();
 }
