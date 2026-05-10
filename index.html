@@ -1220,6 +1220,119 @@
     .collector-card { aspect-ratio: 4 / 5.1; }
     .card-archetype-name { font-size: 26px; }
   }
+  /* ── Username screen ───────────────────────────────────────────────────── */
+  #screen-username .screen-shell { padding-bottom: 32px; }
+  .username-main { display:flex; align-items:center; justify-content:center; min-height:100%; }
+  .username-card {
+    background: var(--cream, #F5F0E8);
+    border-radius: 24px;
+    padding: 2.5rem 2rem;
+    max-width: 420px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  }
+  .username-card h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: #0A0E1A;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .username-card p {
+    font-size: 1rem;
+    color: #5A5040;
+    line-height: 1.5;
+  }
+  .username-input {
+    width: 100%;
+    padding: 0.9rem 1.2rem;
+    background: #fff;
+    border: 2px solid rgba(0,0,0,0.1);
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    color: #0A0E1A;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .username-input:focus { border-color: #E8A030; box-shadow: 0 0 0 3px rgba(232,160,48,0.15); }
+  .username-input::placeholder { color: #9B8E7A; }
+
+  /* ── Result card — image background version ────────────────────────────── */
+  .card-image-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+  .card-image-outer {
+    /* native size 1080×1350, scaled to fit screen */
+    width: 1080px;
+    height: 1350px;
+    transform-origin: top center;
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 16px 64px rgba(0,0,0,0.45);
+  }
+  .card-bg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 56px 64px 52px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .card-overlay-username {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 52px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+    word-break: break-all;
+  }
+  .card-overlay-serial {
+    font-family: 'Inter', sans-serif;
+    font-size: 24px;
+    font-weight: 500;
+    color: rgba(245,240,232,0.75);
+    letter-spacing: 0.04em;
+  }
+  .card-overlay-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 18px;
+  }
+  .card-overlay-date {
+    font-family: 'Inter', sans-serif;
+    font-size: 22px;
+    color: rgba(245,240,232,0.7);
+  }
+  .card-overlay-url {
+    font-family: 'Inter', sans-serif;
+    font-size: 22px;
+    color: rgba(245,240,232,0.7);
+  }
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </style>
 </head>
 <body data-theme="light" data-mascot="full">
@@ -1344,53 +1457,60 @@
 </section>
 
 <!-- ════════════════════════════════════════════════════════════════════════
+     SCREEN 3b — X USERNAME
+═════════════════════════════════════════════════════════════════════════ -->
+<section id="screen-username" class="screen">
+  <div class="screen-shell">
+    <div class="username-main">
+      <div class="username-card">
+        <h2>One last thing</h2>
+        <p>What's your X handle?</p>
+        <input
+          class="username-input"
+          type="text"
+          id="username-input"
+          placeholder="@yourhandle"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button class="btn-primary" style="width:100%;justify-content:center;" onclick="handleUsernameSubmit()">
+          See My Result
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" aria-hidden="true"><path d="M5 12h14"/><path d="m13 5 7 7-7 7"/></svg>
+        </button>
+        <button class="skip-link" onclick="handleUsernameSubmit(true)">Skip</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════
      SCREEN 4 — RESULT
 ═════════════════════════════════════════════════════════════════════════ -->
 <section id="screen-result" class="screen">
   <div class="screen-shell">
     <div class="result-main">
-      <span class="result-eyebrow"><span class="dot"></span>Your AI Agent Archetype</span>
+      <span class="result-eyebrow"><span class="dot"></span>Your AI Personality Type</span>
 
-      <article class="collector-card" id="collector-card" data-style="editorial">
-        <header class="card-top">
-          <span class="card-top-left">Animoca Minds · <strong>Collector Series</strong></span>
-          <span class="card-serial" id="card-serial">#001</span>
-        </header>
-
-        <div class="card-hero">
-          <div class="card-hero-stage">
-            <div class="card-hero-bg"></div>
-            <span class="card-hero-spark tl">⚡ AI Agent</span>
-            <span class="card-hero-spark br" id="card-hero-hours">8h / week</span>
-            <img class="card-hero-img" id="card-hero-img" src="mascot-confident.png" alt="" onerror="this.style.display='none'" />
+      <!-- Image-background collector card — 1080×1350 scaled to fit -->
+      <div class="card-image-wrap">
+        <div class="card-image-outer" id="card-image-outer">
+          <!-- // REPLACE: card PNG files in root: card-operator.png, card-closer.png, etc. -->
+          <img class="card-bg-img" id="card-bg-img" src="" alt="Result card" />
+          <div class="card-overlay">
+            <div class="card-overlay-username" id="overlay-username"></div>
+            <div class="card-overlay-serial" id="overlay-serial"></div>
+            <div class="card-overlay-row">
+              <div class="card-overlay-date" id="overlay-date"></div>
+              <div class="card-overlay-url">hellominds.ai</div>
+            </div>
           </div>
         </div>
-
-        <div class="card-info">
-          <h2 class="card-archetype-name" id="card-name">THE OPERATOR</h2>
-          <p class="card-tagline" id="card-tagline">You keep everything running.</p>
-          <span class="card-stat" id="card-stat">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
-            <span id="card-stat-text">Saves you 8 hours per week</span>
-          </span>
-        </div>
-
-        <footer class="card-foot">
-          <span class="card-foot-brand">
-            <svg viewBox="0 0 200 30" fill="currentColor" aria-hidden="true">
-              <text x="0" y="22" font-family="Manrope, sans-serif" font-weight="800" font-size="22" letter-spacing="-1">ANIMOCA MINDS</text>
-            </svg>
-          </span>
-          <span class="card-foot-url">animocaminds.ai</span>
-        </footer>
-      </article>
-
-      <div class="result-tasks">
-        <span class="result-tasks-title">What your Mind handles for you</span>
-        <div id="card-tasks"></div>
       </div>
 
       <div class="result-actions">
+        <button class="btn-primary" style="width:100%;justify-content:center;" onclick="downloadCard()">
+          Download Card
+        </button>
         <button class="btn-share" onclick="shareOnX()">
           <svg class="x-logo" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.849L1.254 2.25H8.08l4.259 5.63 5.905-5.63Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -1525,6 +1645,8 @@ let answers = {};
 let currentArchetype = null;
 let currentArchetypeKey = null;
 let advanceTimer = null;
+let xUsername = '';
+let cardSerial = '';
 const mascotImgEls = {};
 
 /* ── Init progress pips ─────────────────────────────────────────────────── */
@@ -1683,6 +1805,7 @@ function selectAnswer(answerIndex, cardEl) {
     } else {
       showScreen('screen-email');
     }
+
   }, 320);
 }
 
@@ -1708,47 +1831,105 @@ function handleEmailSubmit(event) {
     scores: { ...scores }
   };
   try { localStorage.setItem('findyourmind_capture', JSON.stringify(captureData)); } catch (_) {}
-  showResult();
+  showScreen('screen-username');
 }
 window.handleEmailSubmit = handleEmailSubmit;
+
+function handleUsernameSubmit(skip) {
+  if (!skip) {
+    const raw = document.getElementById('username-input').value.trim();
+    xUsername = raw ? (raw.startsWith('@') ? raw : '@' + raw) : '';
+  } else {
+    xUsername = '';
+  }
+  showResult();
+}
+window.handleUsernameSubmit = handleUsernameSubmit;
 
 function showResult() {
   const result = computeResult();
   currentArchetype = result.data;
   currentArchetypeKey = result.key;
+  // Generate serial once: last 5 digits of timestamp, zero-padded
+  cardSerial = 'MIND #' + String(Date.now()).slice(-5).padStart(5, '0');
   populateResultCard(result.key, result.data);
   showScreen('screen-result');
-  requestAnimationFrame(() => {
-    setTimeout(() => {
-      document.getElementById('collector-card').classList.add('revealed');
-    }, 80);
-  });
+  scaleCard();
 }
 window.showResult = showResult;
 
-function populateResultCard(key, archetype) {
-  document.getElementById('card-name').textContent = `You are ${archetype.displayName}`;
-  document.getElementById('card-tagline').textContent = archetype.description;
-  document.getElementById('card-stat-text').textContent = `Your ideal Mind — ${archetype.mindName}`;
-  document.getElementById('card-hero-hours').textContent = archetype.mindName;
-  document.getElementById('card-serial').textContent = archetypeSerial(key);
+/* Map archetype key → card image filename */
+const archetypeCardImages = {
+  Operator:    'card-operator.png',
+  Closer:      'card-closer.png',
+  Strategist:  'card-strategist.png',
+  Relay:       'card-relay.png',
+  Nutritionist:'card-nutritionist.png',
+  Coach:       'card-coach.png',
+  Executor:    'card-executor.png'
+};
 
-  const heroExpr = {
-    Operator: 'confident', Closer: 'confident', Strategist: 'thinking',
-    Relay: 'happy', Nutritionist: 'happy', Coach: 'confident', Executor: 'happy'
-  }[key] || 'confident';
-  document.getElementById('card-hero-img').src = `mascot-${heroExpr}.png`;
-
-  // Tasks removed — clear the section
-  document.getElementById('card-tasks').innerHTML = '';
+function formatDate(d) {
+  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 }
+
+function populateResultCard(key, archetype) {
+  // Card background image
+  document.getElementById('card-bg-img').src = archetypeCardImages[key] || '';
+
+  // Overlay text
+  document.getElementById('overlay-username').textContent = xUsername || '';
+  document.getElementById('overlay-serial').textContent = cardSerial;
+  document.getElementById('overlay-date').textContent = formatDate(new Date());
+}
+
+/* Scale card to fit viewport width */
+function scaleCard() {
+  const outer = document.getElementById('card-image-outer');
+  if (!outer) return;
+  const available = Math.min(window.innerWidth - 40, 540);
+  const scale = available / 1080;
+  outer.style.transform = `scale(${scale})`;
+  outer.style.marginBottom = `${-(1350 * (1 - scale))}px`;
+}
+window.addEventListener('resize', scaleCard);
+
+/* ── Download card ──────────────────────────────────────────────────────── */
+function downloadCard() {
+  const el = document.getElementById('card-image-outer');
+  if (!el) return;
+  // Temporarily reset scale so html2canvas captures at full 1080×1350
+  const prev = el.style.transform;
+  const prevMb = el.style.marginBottom;
+  el.style.transform = 'scale(1)';
+  el.style.marginBottom = '0';
+  html2canvas(el, {
+    useCORS: true,
+    allowTaint: true,
+    scale: 1,
+    width: 1080,
+    height: 1350,
+    backgroundColor: null
+  }).then(canvas => {
+    el.style.transform = prev;
+    el.style.marginBottom = prevMb;
+    const link = document.createElement('a');
+    link.download = 'my-mind-card.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }).catch(() => {
+    el.style.transform = prev;
+    el.style.marginBottom = prevMb;
+  });
+}
+window.downloadCard = downloadCard;
 
 /* ── Share ──────────────────────────────────────────────────────────────── */
 function shareOnX() {
   if (!currentArchetype) return;
-  const pageUrl = window.location.href;
+  const pageUrl = 'https://kirito88888888.github.io/find-your-mind/';
   const tweetText =
-    `I just found out I'm ${currentArchetype.displayName} - find out what type of AI user you are at ${pageUrl} #AnimocaMinds`;
+    `I just found out I am ${currentArchetype.displayName} - find out what type of AI user you are at ${pageUrl} #AnimocaMinds #FindYourMind`;
   window.open(
     `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`,
     '_blank',
@@ -1758,8 +1939,10 @@ function shareOnX() {
 window.shareOnX = shareOnX;
 
 function retakeQuiz() {
-  document.getElementById('collector-card').classList.remove('revealed');
   document.getElementById('email-input').value = '';
+  document.getElementById('username-input').value = '';
+  xUsername = '';
+  cardSerial = '';
   startQuiz();
 }
 window.retakeQuiz = retakeQuiz;
