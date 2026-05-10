@@ -1288,37 +1288,63 @@
     object-fit: cover;
     display: block;
   }
-  /* Transparent overlay covering 78%–95% of card height (the brown panel area) */
+  /* Transparent overlay covering the full blank brown panel (78%–100%) */
   .card-overlay {
     position: absolute;
     left: 0;
     right: 0;
-    top: 89%;
-    bottom: 2%;
-    padding: 0 64px;
+    top: 78%;
+    bottom: 0;
+    padding: 36px 64px 40px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     pointer-events: none;
   }
+  .card-overlay-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.6);
+    margin-bottom: 6px;
+  }
+  .card-overlay-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 64px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+  .card-overlay-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    color: rgba(245,240,232,0.8);
+    line-height: 1.4;
+    margin-bottom: 12px;
+  }
   .card-overlay-username {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 36px;
+    font-size: 28px;
     font-weight: 700;
     color: #ffffff;
     letter-spacing: -0.01em;
     line-height: 1.1;
-    word-break: break-all;
   }
   .card-overlay-footer {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
+    margin-top: auto;
+    padding-top: 10px;
   }
   .card-overlay-footer span {
     font-family: 'Inter', sans-serif;
-    font-size: 20px;
-    color: rgba(245,240,232,0.7);
+    font-size: 18px;
+    color: rgba(245,240,232,0.65);
   }
   .card-overlay-footer .of-center {
     text-align: center;
@@ -1492,10 +1518,15 @@
           <!-- // REPLACE: card-[archetype].png files in root directory -->
           <img class="card-bg-img" id="card-bg-img" src="" alt="Result card" />
 
-          <!-- Dynamic overlay: sits over 78–95% of card (brown panel area) -->
-          <!-- Only adds the 4 user-specific elements not baked into the image -->
+          <!-- Dynamic overlay: covers full blank brown panel (top 78% → bottom) -->
+          <!-- All text is rendered in HTML — card image provides artwork only -->
           <div class="card-overlay">
-            <div class="card-overlay-username" id="overlay-username"></div>
+            <div>
+              <div class="card-overlay-label">YOU ARE</div>
+              <div class="card-overlay-name" id="overlay-name"></div>
+              <div class="card-overlay-desc" id="overlay-desc"></div>
+              <div class="card-overlay-username" id="overlay-username"></div>
+            </div>
             <div class="card-overlay-footer">
               <span id="overlay-serial"></span>
               <span class="of-center">hellominds.ai</span>
@@ -1875,11 +1906,13 @@ function formatDate(d) {
 }
 
 function populateResultCard(key, archetype) {
-  // Full card image — YOU ARE, name, and description are baked into the PNG
+  // Card image provides artwork only — brown panel is blank
   document.getElementById('card-bg-img').src = archetypeCardImages[key] || '';
 
-  // Dynamic overlay — only the 4 user-specific elements
-  document.getElementById('overlay-username').textContent = xUsername || '';
+  // All panel text rendered dynamically
+  document.getElementById('overlay-name').textContent = archetype.displayName.toUpperCase();
+  document.getElementById('overlay-desc').textContent = archetype.description;
+  document.getElementById('overlay-username').textContent = xUsername || '@anonymous';
   document.getElementById('overlay-serial').textContent = cardSerial;
   document.getElementById('overlay-date').textContent = formatDate(new Date());
 }
